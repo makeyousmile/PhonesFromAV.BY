@@ -40,13 +40,14 @@ func ScrapPage(pageNumber string) []string {
 		}
 
 	})
-	c.Visit("https://cars.av.by/filter?page=" + pageNumber + "&sort=4")
+	c.Visit("https://cars.av.by/filter?place_region[0]=1006&page=" + pageNumber + "&sort=4")
 	c.Wait()
+	log.Print(links)
 	return links
 }
-func GetIds(links []string) []string {
+func GetIds(pageNumber string) []string {
 	Ids := []string{}
-	for _, link := range ScrapPage("1") {
+	for _, link := range ScrapPage(pageNumber) {
 		i := len(link) - 9
 		id := link[i:]
 		log.Print(id)
