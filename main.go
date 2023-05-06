@@ -1,23 +1,22 @@
 package main
 
-import (
-	"log"
-	"strconv"
-)
+var db DB
 
 func main() {
-	run(999)
+	//run(999)
 	//getToken()
 	//sendSms("test", []string{})
-
+	db = Newdb()
+	run()
+	//phones := getPhones(10)
+	//log.Print(phones)
+	//dbInsert(db, phones)
+	//db()
+	startHttpServer()
 }
-func run(pages int) {
-	for i := 0; i < pages; i++ {
-		for _, id := range GetIds(strconv.FormatInt(int64(i), 10)) {
-			phone := GetPhone(id)
-			log.Print(phone)
-			writeTofile(phone + "\n")
-		}
-	}
 
+func checkErr(err error) {
+	if err != nil {
+		panic(err)
+	}
 }

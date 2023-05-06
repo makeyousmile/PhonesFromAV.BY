@@ -7,6 +7,7 @@ import (
 	"github.com/gocolly/colly"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -19,6 +20,33 @@ type Data []struct {
 		Code  string `json:"code"`
 	} `json:"country"`
 	Number string `json:"number"`
+}
+
+func run() {
+	go func() {
+		for {
+			addedphones := dbInsert(db, getPhones(10))
+			if addedphones != nil {
+				for _, phone := range addedphones {
+					log.Print(phone)
+				}
+			}
+			time.Sleep(time.Minute * 2)
+		}
+	}()
+}
+func getPhones(pages int) []Phone {
+	phones := []Phone{}
+	for i := 0; i < pages; i++ {
+		for _, id := range GetIds(strconv.FormatInt(int64(i), 10)) {
+			phone := Phone{}
+			phone.number = GetNumber(id)
+			phone.date = time.Now()
+			phones = append(phones, phone)
+			//writeTofile(phone.number + "\n")
+		}
+	}
+	return phones
 }
 
 func ScrapPage(pageNumber string) []string {
@@ -42,7 +70,7 @@ func ScrapPage(pageNumber string) []string {
 	})
 	c.Visit("https://cars.av.by/filter?place_region[0]=1006&page=" + pageNumber + "&sort=4")
 	c.Wait()
-	log.Print(links)
+	//log.Print(links)
 	return links
 }
 func GetIds(pageNumber string) []string {
@@ -50,17 +78,17 @@ func GetIds(pageNumber string) []string {
 	for _, link := range ScrapPage(pageNumber) {
 		i := len(link) - 9
 		id := link[i:]
-		log.Print(id)
+		//log.Print(id)
 		Ids = append(Ids, id)
 	}
 	return Ids
 }
-func GetPhone(id string) string {
+func GetNumber(id string) string {
 	phone := ""
 	data := Data{}
 
 	link := "https://api.av.by/offers/" + id + "/phones"
-	log.Print(link)
+	//log.Print(link)
 	err := getJson(link, &data)
 	if err != nil {
 		log.Print("Error get phones")

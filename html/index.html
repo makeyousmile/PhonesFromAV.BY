@@ -11,7 +11,7 @@
     <div class="container has-background-danger">
         <section class="section">
         <h1 class="title">
-            Avtodvor.by Bot
+            Avtodvor Bot
         </h1>
         </section>
     </div>
@@ -23,7 +23,7 @@
         <button class="button is-dark is-pulled-right">Очисить базу</button>
     </div>
     <div class="column">
-        <input class="input is-link" type="text" placeholder="Текст смс">
+        <input class="input is-link" type="text" placeholder="">
 
     </div>
     <div class="column">
@@ -36,25 +36,25 @@
     <div class="level-item has-text-centered">
         <div>
             <p class="heading">Собрано номеров</p>
-            <p class="title">3,456</p>
+            <p class="title">{{.AllPhonesCount}}</p>
         </div>
     </div>
     <div class="level-item has-text-centered">
         <div>
-            <p class="heading">отправлено смс</p>
-            <p class="title">3000</p>
+            <p class="heading">Отпрвлено СМС</p>
+            <p class="title">{{.AllSmsCount}}</p>
         </div>
     </div>
     <div class="level-item has-text-centered">
         <div>
-            <p class="heading">Собрано номеров за сегодня</p>
-            <p class="title">100</p>
+            <p class="heading">Собрано номеров сегодня</p>
+            <p class="title">{{.TodayPhoneCount}}</p>
         </div>
     </div>
     <div class="level-item has-text-centered">
         <div>
-            <p class="heading">Отправлено смс засегодня</p>
-            <p class="title">100</p>
+            <p class="heading">Отпралено СМС сегодня</p>
+            <p class="title">{{.TodaySMScount}}</p>
         </div>
     </div>
 </nav>
