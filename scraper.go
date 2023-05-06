@@ -22,19 +22,6 @@ type Data []struct {
 	Number string `json:"number"`
 }
 
-func run() {
-	go func() {
-		for {
-			addedphones := dbInsert(db, getPhones(10))
-			if addedphones != nil {
-				for _, phone := range addedphones {
-					log.Print(phone)
-				}
-			}
-			time.Sleep(time.Minute * 2)
-		}
-	}()
-}
 func getPhones(pages int) []Phone {
 	phones := []Phone{}
 	for i := 0; i < pages; i++ {
@@ -42,11 +29,29 @@ func getPhones(pages int) []Phone {
 			phone := Phone{}
 			phone.number = GetNumber(id)
 			phone.date = time.Now()
-			phones = append(phones, phone)
+			if phone.number != "" {
+				phones = append(phones, phone)
+			}
 			//writeTofile(phone.number + "\n")
 		}
 	}
 	return phones
+}
+
+func getPhone(pages int, phones chan Phone) {
+
+	for i := 0; i < pages; i++ {
+		for _, id := range GetIds(strconv.FormatInt(int64(i), 10)) {
+			phone := Phone{}
+			phone.number = GetNumber(id)
+			phone.date = time.Now()
+			if phone.number != "" {
+				phones <- phone
+			}
+			//writeTofile(phone.number + "\n")
+		}
+	}
+
 }
 
 func ScrapPage(pageNumber string) []string {

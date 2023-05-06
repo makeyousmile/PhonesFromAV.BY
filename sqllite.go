@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	_ "github.com/mattn/go-sqlite3"
+	"log"
 	"time"
 )
 
@@ -24,8 +25,7 @@ func Newdb() DB {
 	return db
 }
 
-func dbInsert(db DB, phones []Phone) []Phone {
-	addedPhone := []Phone{}
+func dbInsertPhones(db DB, phones []Phone) {
 	stmt, err := db.sql.Prepare("INSERT OR IGNORE INTO phones(number, creation_time) values(?,?)")
 	db.stmt = stmt
 	checkErr(err)
@@ -35,12 +35,31 @@ func dbInsert(db DB, phones []Phone) []Phone {
 		checkErr(err)
 		added, err := res.RowsAffected()
 		checkErr(err)
-		if added != 0 {
-			addedPhone = append(addedPhone, phone)
+		if added == 1 {
+			log.Print(phone.number)
+			log.Print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 		}
 
 	}
-	return addedPhone
+
+}
+func dbInsertPhone(phones chan Phone) {
+	stmt, err := db.sql.Prepare("INSERT OR IGNORE INTO phones(number, creation_time) values(?,?)")
+	db.stmt = stmt
+	checkErr(err)
+
+	for phone := range phones {
+		res, err := stmt.Exec(phone.number, phone.date)
+		checkErr(err)
+		added, err := res.RowsAffected()
+		checkErr(err)
+		if added == 1 {
+			log.Print(phone.number)
+			log.Print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+		}
+
+	}
+
 }
 func GetPhonesCount() {
 

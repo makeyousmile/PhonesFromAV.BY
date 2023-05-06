@@ -7,12 +7,20 @@ func main() {
 	//getToken()
 	//sendSms("test", []string{})
 	db = Newdb()
-	run()
+	phones := make(chan Phone)
+
+	go proc(phones)
 	//phones := getPhones(10)
 	//log.Print(phones)
 	//dbInsert(db, phones)
 	//db()
+
 	startHttpServer()
+}
+
+func proc(phones chan Phone) {
+	go getPhone(10, phones)
+	go dbInsertPhone(phones)
 }
 
 func checkErr(err error) {
