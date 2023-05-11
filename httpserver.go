@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 )
 
@@ -12,7 +14,7 @@ type TemplateVars struct {
 	TodaySMScount   string
 }
 
-func HttpHandler(w http.ResponseWriter, r *http.Request) {
+func httpHandler(w http.ResponseWriter, r *http.Request) {
 	tmp := TemplateVars{}
 	tmp.AllPhonesCount = "3000"
 	tmp.AllSmsCount = "3000"
@@ -23,7 +25,15 @@ func HttpHandler(w http.ResponseWriter, r *http.Request) {
 	templ.Execute(w, tmp)
 
 }
+func Ajax(w http.ResponseWriter, r *http.Request) {
+	log.Print("post")
+	if r.Method == "POST" {
+		sendedData := r.FormValue("sendedData")
+		fmt.Println("My request is: ", sendedData)
+	}
+}
 func startHttpServer() {
-	http.HandleFunc("/", HttpHandler)
-	http.ListenAndServe(":8080", nil)
+	http.HandleFunc("/", httpHandler)
+	http.HandleFunc("/post", Ajax)
+	http.ListenAndServe(":80", nil)
 }

@@ -1,8 +1,12 @@
 package main
 
+import "time"
+
 var db DB
 
 func main() {
+
+	startHttpServer()
 	//run(999)
 	//getToken()
 	//sendSms("test", []string{})
@@ -15,12 +19,16 @@ func main() {
 	//dbInsert(db, phones)
 	//db()
 
-	startHttpServer()
 }
 
 func proc(phones chan Phone) {
-	go getPhone(10, phones)
+	//1й запуск - сбор всех номор
+	go getPhone(200, phones)
 	go dbInsertPhone(phones)
+	for {
+		time.Sleep(time.Minute)
+		getPhone(5, phones)
+	}
 }
 
 func checkErr(err error) {

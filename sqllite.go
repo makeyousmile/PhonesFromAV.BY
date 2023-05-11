@@ -43,6 +43,7 @@ func dbInsertPhones(db DB, phones []Phone) {
 	}
 
 }
+
 func dbInsertPhone(phones chan Phone) {
 	stmt, err := db.sql.Prepare("INSERT OR IGNORE INTO phones(number, creation_time) values(?,?)")
 	db.stmt = stmt

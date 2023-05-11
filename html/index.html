@@ -5,14 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Hello Bulma!</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="  crossorigin="anonymous"></script>
+
 </head>
 <body>
 <section class="section">
     <div class="container has-background-danger">
         <section class="section">
-        <h1 class="title">
-            Avtodvor Bot
-        </h1>
+            <h1 class="title">
+                Avtodvor Bot
+            </h1>
         </section>
     </div>
 </section>
@@ -20,14 +22,14 @@
 
 <div class="columns">
     <div class="column">
-        <button class="button is-dark is-pulled-right">Очисить базу</button>
+        <button class="button is-dark is-pulled-right" id="clearbase">Очисить базу</button>
     </div>
     <div class="column">
-        <input class="input is-link" type="text" placeholder="">
+        <input class="input is-link" type="text" placeholder="" id="smstext">
 
     </div>
     <div class="column">
-        <button class="button is-dark">Сохранить</button>
+        <button class="button is-dark" id="smsButton">Сохранить</button>
     </div>
 
 </div>
@@ -64,4 +66,26 @@
 </div>
 
 </body>
+<script>
+    function success(){
+        alert(10)
+    }
+    $('#smsButton').click(function() {
+        var str = $("#smstext").val();
+        $.ajax({
+            url: "post",
+            method: "POST",
+            data : { sendedData: str},
+            success : success()
+        });
+    });
+    $('#clearbase').click(function() {
+        $.ajax({
+            url: "/post",
+            method: "POST",
+            data : { sendedData: 'Hello'},
+            success : success()
+        });
+    });
+</script>
 </html>
