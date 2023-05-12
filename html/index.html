@@ -38,7 +38,7 @@
     <div class="level-item has-text-centered">
         <div>
             <p class="heading">Собрано номеров</p>
-            <p class="title">{{.AllPhonesCount}}</p>
+            <p class="title" id="count"></p>
         </div>
     </div>
     <div class="level-item has-text-centered">
@@ -50,7 +50,7 @@
     <div class="level-item has-text-centered">
         <div>
             <p class="heading">Собрано номеров сегодня</p>
-            <p class="title">{{.TodayPhoneCount}}</p>
+            <p class="title" id="counttoday"></p>
         </div>
     </div>
     <div class="level-item has-text-centered">
@@ -87,6 +87,29 @@
             data : { sendedData: 'Hello'},
             success : success()
         });
+    });
+</script>
+
+<script>
+    function show() {
+        $.ajax ({
+            url: "count",
+            cache: false,
+            success: function(html) {
+                $("#count").html(html);
+            }
+        });
+        $.ajax ({
+            url: "counttoday",
+            cache: false,
+            success: function(html) {
+                $("#counttoday").html(html);
+            }
+        });
+    }
+    $(document).ready(function() {
+        show();
+        setInterval ('show()',1000);
     });
 </script>
 </html>

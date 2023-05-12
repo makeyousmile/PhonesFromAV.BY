@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"io"
 	"log"
 	"net/http"
 )
@@ -36,15 +37,33 @@ func Ajax(w http.ResponseWriter, r *http.Request) {
 	}
 }
 func AjaxCount(w http.ResponseWriter, r *http.Request) {
-	log.Print("post")
+
+	count := GetPhonesCount()
 	if r.Method == "POST" {
-		count := GetPhonesCount()
+		log.Print("post")
 		//w.Write(byte(count))
 		log.Print(count)
+
 	}
+	io.WriteString(w, count)
 }
+
+func AjaxCountToday(w http.ResponseWriter, r *http.Request) {
+
+	count := GetTodayPhonesCount()
+	if r.Method == "POST" {
+		log.Print("post")
+		//w.Write(byte(count))
+		log.Print(count)
+
+	}
+	io.WriteString(w, count)
+}
+
 func startHttpServer() {
 	http.HandleFunc("/", httpHandler)
 	http.HandleFunc("/post", Ajax)
+	http.HandleFunc("/count", AjaxCount)
+	http.HandleFunc("/counttoday", AjaxCountToday)
 	http.ListenAndServe(":80", nil)
 }
