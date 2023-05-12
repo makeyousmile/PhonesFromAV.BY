@@ -1,23 +1,28 @@
 package main
 
-import "time"
+import (
+	"log"
+	"time"
+)
 
 var db DB
 
 func main() {
 
-	startHttpServer()
 	//run(999)
 	//getToken()
 	//sendSms("test", []string{})
 	db = Newdb()
+	//GetPhonesCount()
+	log.Print(GetSMS())
 	phones := make(chan Phone)
-
+	//
 	go proc(phones)
-	//phones := getPhones(10)
-	//log.Print(phones)
-	//dbInsert(db, phones)
-	//db()
+	////phones := getPhones(10)
+	////log.Print(phones)
+	////dbInsert(db, phones)
+	////db()
+	startHttpServer()
 
 }
 
@@ -27,6 +32,7 @@ func proc(phones chan Phone) {
 	go dbInsertPhone(phones)
 	for {
 		time.Sleep(time.Minute)
+		log.Print("Get phones fom loop")
 		getPhone(5, phones)
 	}
 }

@@ -12,14 +12,16 @@ type TemplateVars struct {
 	AllSmsCount     string
 	TodayPhoneCount string
 	TodaySMScount   string
+	SMS             string
 }
 
 func httpHandler(w http.ResponseWriter, r *http.Request) {
 	tmp := TemplateVars{}
-	tmp.AllPhonesCount = "3000"
-	tmp.AllSmsCount = "3000"
-	tmp.TodayPhoneCount = "10"
-	tmp.TodaySMScount = "10"
+	tmp.AllPhonesCount = GetPhonesCount()
+	tmp.AllSmsCount = "-"
+	tmp.TodayPhoneCount = GetTodayPhonesCount()
+	tmp.TodaySMScount = "-"
+	tmp.SMS = GetSMS()
 	templ, err := template.ParseFiles("html/index.html")
 	checkErr(err)
 	templ.Execute(w, tmp)
@@ -28,8 +30,17 @@ func httpHandler(w http.ResponseWriter, r *http.Request) {
 func Ajax(w http.ResponseWriter, r *http.Request) {
 	log.Print("post")
 	if r.Method == "POST" {
-		sendedData := r.FormValue("sendedData")
-		fmt.Println("My request is: ", sendedData)
+		SMS := r.FormValue("SMS")
+		fmt.Println("My request is: ", SMS)
+		SetSMS(SMS)
+	}
+}
+func AjaxCount(w http.ResponseWriter, r *http.Request) {
+	log.Print("post")
+	if r.Method == "POST" {
+		count := GetPhonesCount()
+		//w.Write(byte(count))
+		log.Print(count)
 	}
 }
 func startHttpServer() {

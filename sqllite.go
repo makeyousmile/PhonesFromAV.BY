@@ -62,6 +62,30 @@ func dbInsertPhone(phones chan Phone) {
 	}
 
 }
-func GetPhonesCount() {
+func GetPhonesCount() string {
+	var data string
+	rows := db.sql.QueryRow("SELECT COUNT(*) FROM phones")
+	rows.Scan(&data)
+	return data
 
+}
+func SetSMS(sms string) {
+	res, err := db.sql.Exec("UPDATE params SET sms = $1;", sms)
+	checkErr(err)
+	log.Print(res.RowsAffected())
+}
+func GetSMS() string {
+	var sms = ""
+
+	res := db.sql.QueryRow("select sms from params")
+	err := res.Scan(&sms)
+	checkErr(err)
+
+	return sms
+}
+func GetTodayPhonesCount() string {
+	var data string
+	rows := db.sql.QueryRow("SELECT COUNT(*) FROM phones WHERE creation_time  >= DATE('now') AND creation_time < DATE('now', '+1 day')")
+	rows.Scan(&data)
+	return data
 }

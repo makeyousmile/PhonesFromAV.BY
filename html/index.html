@@ -25,7 +25,7 @@
         <button class="button is-dark is-pulled-right" id="clearbase">Очисить базу</button>
     </div>
     <div class="column">
-        <input class="input is-link" type="text" placeholder="" id="smstext">
+        <input class="input is-link" type="text" placeholder="{{.SMS}}" id="smstext">
 
     </div>
     <div class="column">
@@ -68,14 +68,15 @@
 </body>
 <script>
     function success(){
-        alert(10)
+        //alert(10)
+        $('#smsButton').addClass("is-success");
     }
     $('#smsButton').click(function() {
         var str = $("#smstext").val();
         $.ajax({
             url: "post",
             method: "POST",
-            data : { sendedData: str},
+            data : { SMS: str},
             success : success()
         });
     });

@@ -10,6 +10,24 @@ import (
 	"net/http"
 )
 
+type MtsSms struct {
+	Messages []struct {
+		Content struct {
+			ShortText string `json:"short_text"`
+		} `json:"content"`
+		To []struct {
+			Msisdn    string `json:"msisdn"`
+			MessageId string `json:"message_id"`
+		} `json:"to"`
+	} `json:"messages"`
+	Options struct {
+		Class int `json:"class"`
+		From  struct {
+			SmsAddress string `json:"sms_address"`
+		} `json:"from"`
+	} `json:"options"`
+}
+
 func sendSms(text string, phones []string) {
 	httpposturl := "https://api.sendpulse.com/sms/send"
 	bearer := "Bearer " + getToken()
