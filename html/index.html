@@ -20,20 +20,6 @@
 </section>
 
 
-<div class="columns">
-    <div class="column">
-        <button class="button is-dark is-pulled-right" id="clearbase">Очисить базу</button>
-    </div>
-    <div class="column">
-        <input class="input is-link" type="text" placeholder="{{.SMS}}" id="smstext">
-
-    </div>
-    <div class="column">
-        <button class="button is-dark" id="smsButton">Сохранить</button>
-    </div>
-
-</div>
-
 <nav class="level">
     <div class="level-item has-text-centered">
         <div>
@@ -61,15 +47,63 @@
     </div>
 </nav>
 
+
+<div class="columns">
+    <div class="column">
+        <div class="column is-two-thirds is-pulled-right">
+            <h2>Изменить текст СМС</h2>
+        </div>
+    </div>
+    <div class="column">
+        <input class="input is-link" type="text" placeholder="{{.SMS}}" id="smstext">
+
+    </div>
+    <div class="column">
+        <button class="button is-dark" id="smsButton">Сохранить</button>
+    </div>
+</div>
+
+
+<div class="columns">
+    <div class="column">
+
+<!--        <div class="block is-pulled-right">-->
+<!--           <h3 >Добавить телефон в банлист</h3>-->
+<!--        </div>-->
+        <div class="column is-two-thirds is-pulled-right">
+            <h2>Добавить телефон в банлист</h2>
+        </div>
+    </div>
+    <div class="column">
+        <input class="input is-link" type="text" placeholder="" id="baned">
+
+    </div>
+    <div class="column">
+        <button class="button is-dark" id="banedbtn">Сохранить</button>
+    </div>
+</div>
+
+
+
 <div class="container">
 
 </div>
 
 </body>
 <script>
-    function success(){
+    function smssuccess(){
         //alert(10)
         $('#smsButton').addClass("is-success");
+        setInterval(function (){
+            $('#smsButton').removeClass("is-success");
+        },2000);
+    }
+    function banedsuccess(){
+        //alert(10)
+        $('#banedbtn').addClass("is-success");
+        setInterval(function (){
+            $('#banedbtn').removeClass("is-success");
+        },2000);
     }
     $('#smsButton').click(function() {
         var str = $("#smstext").val();
@@ -77,7 +111,7 @@
             url: "post",
             method: "POST",
             data : { SMS: str},
-            success : success()
+            success : smssuccess()
         });
     });
     $('#clearbase').click(function() {
@@ -86,6 +120,15 @@
             method: "POST",
             data : { sendedData: 'Hello'},
             success : success()
+        });
+    });
+    $('#banedbtn').click(function() {
+        var str = $("#baned").val();
+        $.ajax({
+            url: "post",
+            method: "POST",
+            data : { baned: str},
+            success : banedsuccess()
         });
     });
 </script>

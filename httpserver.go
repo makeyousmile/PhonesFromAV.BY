@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"html/template"
 	"io"
 	"log"
@@ -32,8 +31,13 @@ func Ajax(w http.ResponseWriter, r *http.Request) {
 	log.Print("post")
 	if r.Method == "POST" {
 		SMS := r.FormValue("SMS")
-		fmt.Println("My request is: ", SMS)
-		SetSMS(SMS)
+		if SMS != "" {
+			SetSMS(SMS)
+		}
+		baned := r.FormValue("baned")
+		if baned != "" {
+			SetBaned(baned)
+		}
 	}
 }
 func AjaxCount(w http.ResponseWriter, r *http.Request) {

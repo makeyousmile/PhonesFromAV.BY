@@ -11,21 +11,13 @@ import (
 
 var db DB
 
+func init() {
+	db = Newdb()
+}
 func main() {
 
-	//run(999)
-	//getToken()
-	//sendSms("test", []string{})
-	db = Newdb()
-	//GetPhonesCount()
-	log.Print(GetSMS())
-	phones := make(chan Phone)
-	//
-	go proc(phones)
-	////phones := getPhones(10)
-	////log.Print(phones)
-	////dbInsert(db, phones)
-	////db()
+	go proc()
+
 	onExit := func() {
 		now := time.Now()
 		ioutil.WriteFile(fmt.Sprintf(`on_exit_%d.txt`, now.UnixNano()), []byte(now.String()), 0644)
@@ -36,10 +28,15 @@ func main() {
 
 }
 
-func proc(phones chan Phone) {
+func proc() {
+	phones := make(chan Phone)
+	sms := make(chan string)
+
+	go sendSMSMTS(sms)
+
 	//1й запуск - сбор всех номор
 	go getPhone(200, phones)
-	go dbInsertPhone(phones)
+	go dbInsertPhone(phones, sms)
 	for {
 		time.Sleep(time.Minute)
 		log.Print("Get phones fom loop")

@@ -2,32 +2,84 @@ package main
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
+	"time"
 )
 
-type MtsSms struct {
-	Messages []struct {
-		Content struct {
-			ShortText string `json:"short_text"`
-		} `json:"content"`
-		To []struct {
-			Msisdn    string `json:"msisdn"`
-			MessageId string `json:"message_id"`
-		} `json:"to"`
-	} `json:"messages"`
-	Options struct {
-		Class int `json:"class"`
-		From  struct {
-			SmsAddress string `json:"sms_address"`
-		} `json:"from"`
-	} `json:"options"`
+type SMS struct {
+	PhoneNumber    int64    `json:"phone_number"`
+	ExtraId        string   `json:"extra_id"`
+	CallbackUrl    string   `json:"callback_url"`
+	StartTime      string   `json:"start_time"`
+	Tag            string   `json:"tag"`
+	Channels       []string `json:"channels"`
+	ChannelOptions struct {
+		Sms struct {
+			Text      string `json:"text"`
+			AlphaName string `json:"alpha_name"`
+			Ttl       int    `json:"ttl"`
+		} `json:"sms"`
+	} `json:"channel_options"`
 }
 
+func basicAuth(username, password string) string {
+	auth := username + ":" + password
+	return base64.StdEncoding.EncodeToString([]byte(auth))
+}
+func sendSMSMTS(sms chan string) {
+	for text := range sms {
+		smstext := GetSMS()
+		sms := SMS{
+			ChannelOptions: struct {
+				Sms struct {
+					Text      string `json:"text"`
+					AlphaName string `json:"alpha_name"`
+					Ttl       int    `json:"ttl"`
+				} `json:"sms"`
+			}{},
+		}
+		sms.Channels = []string{"sms"}
+		sms.ChannelOptions.Sms = struct {
+			Text      string `json:"text"`
+			AlphaName string `json:"alpha_name"`
+			Ttl       int    `json:"ttl"`
+		}(struct {
+			Text      string
+			AlphaName string
+			Ttl       int
+		}{Text: smstext, AlphaName: "", Ttl: 300})
+		num, _ := strconv.ParseInt(text, 10, 64)
+		sms.PhoneNumber = num
+		sms.StartTime = time.Now().String()
+		sms.CallbackUrl = "https://send-dr-here.com"
+		sms.StartTime = time.Now().Format("2006-01-02 15:04:05")
+		httpposturl := "https://api.communicator.mts.by/686/json2/simple"
+
+		jsonData, _ := json.Marshal(sms)
+		req, err := http.NewRequest("POST", httpposturl, bytes.NewBuffer(jsonData))
+		checkErr(err)
+		req.Header.Add("Authorization", "Basic "+basicAuth("autodvor.by_bxd5", "oHoHbo"))
+		req.Header.Set("Content-Type", "application/json; charset=UTF-8")
+		client := &http.Client{}
+
+		resp, err := client.Do(req)
+		if err != nil {
+			log.Println("Error on response.\n[ERRO] -", err)
+		} else {
+			defer resp.Body.Close()
+			data, _ := io.ReadAll(resp.Body)
+			fmt.Println(string(data))
+		}
+	}
+
+}
 func sendSms(text string, phones []string) {
 	httpposturl := "https://api.sendpulse.com/sms/send"
 	bearer := "Bearer " + getToken()

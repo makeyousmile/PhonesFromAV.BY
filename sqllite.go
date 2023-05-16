@@ -44,7 +44,7 @@ func dbInsertPhones(db DB, phones []Phone) {
 
 }
 
-func dbInsertPhone(phones chan Phone) {
+func dbInsertPhone(phones chan Phone, sms chan string) {
 	stmt, err := db.sql.Prepare("INSERT OR IGNORE INTO phones(number, creation_time) values(?,?)")
 	db.stmt = stmt
 	checkErr(err)
@@ -57,6 +57,7 @@ func dbInsertPhone(phones chan Phone) {
 		if added == 1 {
 			log.Print(phone.number)
 			log.Print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+			sms <- "375296668485"
 		}
 
 	}
@@ -88,4 +89,9 @@ func GetTodayPhonesCount() string {
 	rows := db.sql.QueryRow("SELECT COUNT(*) FROM phones WHERE creation_time  >= DATE('now') AND creation_time < DATE('now', '+1 day')")
 	rows.Scan(&data)
 	return data
+}
+
+func SetBaned(number string) {
+	_, err := db.sql.Exec("UPDATE phones SET baned = 1 WHERE number = $1 ;", number)
+	checkErr(err)
 }
