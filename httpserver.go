@@ -78,11 +78,23 @@ func AjaxBaned(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, resp)
 }
 
+func AjaxCleardb(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method == "POST" {
+		cleardb := r.FormValue("cleardb")
+		if cleardb == "1" {
+			Cleardb()
+		}
+	}
+
+}
+
 func startHttpServer() {
 	http.HandleFunc("/", httpHandler)
 	http.HandleFunc("/post", Ajax)
 	http.HandleFunc("/count", AjaxCount)
 	http.HandleFunc("/counttoday", AjaxCountToday)
 	http.HandleFunc("/baned", AjaxBaned)
+	http.HandleFunc("/cleardb", AjaxCleardb)
 	http.ListenAndServe(":80", nil)
 }

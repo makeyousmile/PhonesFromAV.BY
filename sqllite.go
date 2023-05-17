@@ -58,6 +58,7 @@ func dbInsertPhone(phones chan Phone, sms chan string) {
 		if added == 1 {
 			log.Print(phone.number)
 			log.Print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+			//если номер попал в базу - отправляем в канал для послыки смс
 			//sms <- "375296668485"
 		}
 
@@ -124,4 +125,10 @@ func GetBaned() []string {
 	}
 
 	return baned
+}
+
+func Cleardb() {
+	res, err := db.sql.Exec("delete from phones")
+	checkErr(err)
+	log.Print(res.RowsAffected())
 }

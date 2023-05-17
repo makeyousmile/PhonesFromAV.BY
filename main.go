@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/getlantern/systray"
 	"github.com/getlantern/systray/example/icon"
-	"io/ioutil"
 	"log"
+	"os"
 	"time"
 )
 
@@ -16,13 +16,14 @@ func init() {
 }
 func main() {
 
-	//go proc()
+	logToFile()
+
+	go proc()
 
 	log.Print(GetBaned())
 
 	onExit := func() {
-		now := time.Now()
-		ioutil.WriteFile(fmt.Sprintf(`on_exit_%d.txt`, now.UnixNano()), []byte(now.String()), 0644)
+
 	}
 
 	go systray.Run(onReady, onExit)
@@ -51,9 +52,15 @@ func onReady() {
 	systray.SetTitle("Autodvor SMS Bot")
 	systray.SetTooltip("+375 29 666 8485")
 	mQuit := systray.AddMenuItem("Quit", "Quit the whole app")
-
 	// Sets the icon of a menu item. Only available on Mac and Windows.
 	mQuit.SetIcon(icon.Data)
+	go func() {
+		<-mQuit.ClickedCh
+		fmt.Println("Requesting quit")
+		systray.Quit()
+		os.Exit(0)
+		fmt.Println("Finished quitting")
+	}()
 }
 
 func onExit() {

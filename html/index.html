@@ -11,11 +11,23 @@
 <body>
 <section class="section">
     <div class="container has-background-danger">
-        <section class="section">
-            <h1 class="title">
-                Avtodvor Bot
-            </h1>
-        </section>
+        <div class="columns">
+        <div class="column">
+            <section class="section">
+                <h1 class="title">
+                    Avtodvor Bot
+                </h1>
+
+            </section>
+        </div>
+        <div class="column">
+            <section class="section">
+                <button class="button is-dark is-pulled-right" id="cleardb">Сбросить базу</button>
+
+            </section>
+
+        </div>
+        </div>
     </div>
 </section>
 
@@ -74,7 +86,7 @@
     <div class="column">
 
         <div class="column is-two-thirds is-pulled-right">
-            <h2>Добавить телефон в банлист</h2>
+            <h2>Добавить № в банлист (9 цифр)</h2>
         </div>
     </div>
     <div class="column">
@@ -96,6 +108,7 @@
         </div>
     </div>
     <div class="column">
+        <p>Список забаненых номеров:</p>
         <div class="box" id="banedlist">
 
         </div>
@@ -112,7 +125,20 @@
 
 </div>
 
+<footer class="footer has-background-grey-dark">
+    <div class="content has-text-centered">
+        <p>
+
+        </p>
+        <p>
+            <strong>Autodvor sms bot.</strong> <strong>Поддержка: +375 29 6668485 denis.zarubin@gmail.com</strong>
+        </p>
+
+    </div>
+</footer>
+
 </body>
+
 <script>
     function smssuccess(){
         //alert(10)
@@ -128,6 +154,13 @@
             $('#banedbtn').removeClass("is-success");
         },2000);
     }
+    function cleardb(){
+        //alert(10)
+        $('#cleardb').addClass("is-success");
+        setInterval(function (){
+            $('#cleardb').removeClass("is-success");
+        },2000);
+    }
     $('#smsButton').click(function() {
         var str = $("#smstext").val();
         $.ajax({
@@ -137,14 +170,7 @@
             success : smssuccess()
         });
     });
-    $('#clearbase').click(function() {
-        $.ajax({
-            url: "/post",
-            method: "POST",
-            data : { sendedData: 'Hello'},
-            success : success()
-        });
-    });
+
     $('#banedbtn').click(function() {
         var str = $("#baned").val();
         $.ajax({
@@ -154,8 +180,18 @@
             success : banedsuccess()
         });
     });
-</script>
 
+    $('#cleardb').click(function() {
+        var str = 1
+        $.ajax({
+            url: "cleardb",
+            method: "POST",
+            data : { cleardb: str},
+            success : cleardb()
+        });
+    });
+</script>
+<!--скрипты по таймеру-->
 <script>
     function show() {
         $.ajax ({
