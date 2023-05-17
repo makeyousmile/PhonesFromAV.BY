@@ -64,10 +64,25 @@ func AjaxCountToday(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, count)
 }
 
+func AjaxBaned(w http.ResponseWriter, r *http.Request) {
+	resp := ""
+	baned := GetBaned()
+	if r.Method == "POST" {
+		log.Print("post")
+		//w.Write(byte(count))
+
+	}
+	for _, phone := range baned {
+		resp += "<p>" + phone + "</p>"
+	}
+	io.WriteString(w, resp)
+}
+
 func startHttpServer() {
 	http.HandleFunc("/", httpHandler)
 	http.HandleFunc("/post", Ajax)
 	http.HandleFunc("/count", AjaxCount)
 	http.HandleFunc("/counttoday", AjaxCountToday)
+	http.HandleFunc("/baned", AjaxBaned)
 	http.ListenAndServe(":80", nil)
 }

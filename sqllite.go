@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"time"
@@ -57,7 +58,7 @@ func dbInsertPhone(phones chan Phone, sms chan string) {
 		if added == 1 {
 			log.Print(phone.number)
 			log.Print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-			sms <- "375296668485"
+			//sms <- "375296668485"
 		}
 
 	}
@@ -92,6 +93,35 @@ func GetTodayPhonesCount() string {
 }
 
 func SetBaned(number string) {
-	_, err := db.sql.Exec("UPDATE phones SET baned = 1 WHERE number = $1 ;", number)
+	res, err := db.sql.Exec("UPDATE phones SET baned = 1 WHERE number = $1 ;", number)
 	checkErr(err)
+	found, _ := res.RowsAffected()
+	if found == 0 {
+		stmt, err := db.sql.Prepare("INSERT OR IGNORE INTO phones(number, creation_time, baned) values(?,?,?)")
+		checkErr(err)
+		_, err = stmt.Exec(number, time.Now(), 1)
+		checkErr(err)
+
+	}
+}
+func GetBaned() []string {
+	baned := []string{}
+
+	rows, err := db.sql.Query("select number from phones WHERE baned = 1")
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		phone := ""
+		err := rows.Scan(&phone)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		baned = append(baned, phone)
+	}
+
+	return baned
 }

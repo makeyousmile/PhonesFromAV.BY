@@ -16,7 +16,9 @@ func init() {
 }
 func main() {
 
-	go proc()
+	//go proc()
+
+	log.Print(GetBaned())
 
 	onExit := func() {
 		now := time.Now()

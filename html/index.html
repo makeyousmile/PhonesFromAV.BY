@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Hello Bulma!</title>
+    <title>Avtodvor Bot</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="  crossorigin="anonymous"></script>
 
@@ -19,8 +19,11 @@
     </div>
 </section>
 
-
+<div class="box">
 <nav class="level">
+    <div class="level-item has-text-centered">
+
+    </div>
     <div class="level-item has-text-centered">
         <div>
             <p class="heading">Собрано номеров</p>
@@ -45,9 +48,12 @@
             <p class="title">{{.TodaySMScount}}</p>
         </div>
     </div>
+    <div class="level-item has-text-centered">
+
+    </div>
 </nav>
-
-
+</div>
+<div class="box">
 <div class="columns">
     <div class="column">
         <div class="column is-two-thirds is-pulled-right">
@@ -62,14 +68,11 @@
         <button class="button is-dark" id="smsButton">Сохранить</button>
     </div>
 </div>
-
-
+</div>
+<div class="box">
 <div class="columns">
     <div class="column">
 
-<!--        <div class="block is-pulled-right">-->
-<!--           <h3 >Добавить телефон в банлист</h3>-->
-<!--        </div>-->
         <div class="column is-two-thirds is-pulled-right">
             <h2>Добавить телефон в банлист</h2>
         </div>
@@ -82,7 +85,27 @@
         <button class="button is-dark" id="banedbtn">Сохранить</button>
     </div>
 </div>
+</div>
 
+
+<div class="columns">
+    <div class="column">
+
+        <div class="column is-two-thirds is-pulled-right">
+
+        </div>
+    </div>
+    <div class="column">
+        <div class="box" id="banedlist">
+
+        </div>
+
+
+    </div>
+    <div class="column">
+
+    </div>
+</div>
 
 
 <div class="container">
@@ -147,6 +170,13 @@
             cache: false,
             success: function(html) {
                 $("#counttoday").html(html);
+            }
+        });
+        $.ajax ({
+            url: "baned",
+            cache: false,
+            success: function(html) {
+                $("#banedlist").html(html);
             }
         });
     }
