@@ -20,12 +20,6 @@ func main() {
 
 	go proc()
 
-	log.Print(GetBaned())
-
-	onExit := func() {
-
-	}
-
 	go systray.Run(onReady, onExit)
 	startHttpServer()
 
@@ -58,8 +52,9 @@ func onReady() {
 		<-mQuit.ClickedCh
 		fmt.Println("Requesting quit")
 		systray.Quit()
-		os.Exit(0)
 		fmt.Println("Finished quitting")
+		os.Exit(0)
+
 	}()
 }
 

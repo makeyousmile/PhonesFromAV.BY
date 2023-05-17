@@ -15,7 +15,7 @@ type TemplateVars struct {
 	SMS             string
 }
 
-func httpHandler(w http.ResponseWriter, r *http.Request) {
+func httpHandler(w http.ResponseWriter, _ *http.Request) {
 	tmp := TemplateVars{}
 	tmp.AllPhonesCount = GetPhonesCount()
 	tmp.AllSmsCount = "-"
@@ -24,10 +24,11 @@ func httpHandler(w http.ResponseWriter, r *http.Request) {
 	tmp.SMS = GetSMS()
 	templ, err := template.ParseFiles("html/index.html")
 	checkErr(err)
-	templ.Execute(w, tmp)
+	err = templ.Execute(w, tmp)
+	checkErr(err)
 
 }
-func Ajax(w http.ResponseWriter, r *http.Request) {
+func Ajax(_ http.ResponseWriter, r *http.Request) {
 	log.Print("post")
 	if r.Method == "POST" {
 		SMS := r.FormValue("SMS")
@@ -49,7 +50,8 @@ func AjaxCount(w http.ResponseWriter, r *http.Request) {
 		log.Print(count)
 
 	}
-	io.WriteString(w, count)
+	_, err := io.WriteString(w, count)
+	checkErr(err)
 }
 
 func AjaxCountToday(w http.ResponseWriter, r *http.Request) {
@@ -61,7 +63,8 @@ func AjaxCountToday(w http.ResponseWriter, r *http.Request) {
 		log.Print(count)
 
 	}
-	io.WriteString(w, count)
+	_, err := io.WriteString(w, count)
+	checkErr(err)
 }
 
 func AjaxBaned(w http.ResponseWriter, r *http.Request) {
@@ -75,10 +78,11 @@ func AjaxBaned(w http.ResponseWriter, r *http.Request) {
 	for _, phone := range baned {
 		resp += "<p>" + phone + "</p>"
 	}
-	io.WriteString(w, resp)
+	_, err := io.WriteString(w, resp)
+	checkErr(err)
 }
 
-func AjaxCleardb(w http.ResponseWriter, r *http.Request) {
+func AjaxCleardb(_ http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
 		cleardb := r.FormValue("cleardb")
@@ -96,5 +100,6 @@ func startHttpServer() {
 	http.HandleFunc("/counttoday", AjaxCountToday)
 	http.HandleFunc("/baned", AjaxBaned)
 	http.HandleFunc("/cleardb", AjaxCleardb)
-	http.ListenAndServe(":80", nil)
+	err := http.ListenAndServe(":80", nil)
+	checkErr(err)
 }
