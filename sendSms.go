@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -26,6 +25,9 @@ type SMS struct {
 			Ttl       int    `json:"ttl"`
 		} `json:"sms"`
 	} `json:"channel_options"`
+}
+type MTSResponse struct {
+	MessageId string `json:"message_id"`
 }
 
 func basicAuth(username, password string) string {
@@ -74,7 +76,16 @@ func sendSMSMTS(sms chan string) {
 		} else {
 			defer resp.Body.Close()
 			data, _ := io.ReadAll(resp.Body)
-			fmt.Println(string(data))
+			mtsresp := MTSResponse{}
+			err = json.Unmarshal(data, &mtsresp)
+			checkErr(err)
+			if mtsresp.MessageId != "" {
+				log.Print(mtsresp.MessageId)
+			} else {
+				log.Print("ошибка отправки:")
+				log.Print(string(data))
+			}
+			//log.Print(data)
 		}
 	}
 

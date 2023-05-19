@@ -17,8 +17,11 @@ func init() {
 func main() {
 
 	logToFile()
+	sms := make(chan string)
+	go sendSMSMTS(sms)
+	sms <- "37529666848543534645654"
 
-	go proc()
+	//go proc()
 
 	go systray.Run(onReady, onExit)
 	startHttpServer()

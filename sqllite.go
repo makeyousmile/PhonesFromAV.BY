@@ -20,30 +20,30 @@ type DB struct {
 
 func Newdb() DB {
 	db := DB{}
-	sql, err := sql.Open("sqlite3", "db/avtodvor.db")
-	db.sql = sql
+	con, err := sql.Open("sqlite3", "db/avtodvor.db")
+	db.sql = con
 	checkErr(err)
 	return db
 }
 
-func dbInsertPhones(db DB, phones []Phone) {
-	stmt, err := db.sql.Prepare("INSERT OR IGNORE INTO phones(number, creation_time) values(?,?)")
-	db.stmt = stmt
-	checkErr(err)
-
-	for _, phone := range phones {
-		res, err := stmt.Exec(phone.number, phone.date)
-		checkErr(err)
-		added, err := res.RowsAffected()
-		checkErr(err)
-		if added == 1 {
-			log.Print(phone.number)
-			log.Print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-		}
-
-	}
-
-}
+//func dbInsertPhones(db DB, phones []Phone) {
+//	stmt, err := db.sql.Prepare("INSERT OR IGNORE INTO phones(number, creation_time) values(?,?)")
+//	db.stmt = stmt
+//	checkErr(err)
+//
+//	for _, phone := range phones {
+//		res, err := stmt.Exec(phone.number, phone.date)
+//		checkErr(err)
+//		added, err := res.RowsAffected()
+//		checkErr(err)
+//		if added == 1 {
+//			log.Print(phone.number)
+//			log.Print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+//		}
+//
+//	}
+//
+//}
 
 func dbInsertPhone(phones chan Phone, sms chan string) {
 	stmt, err := db.sql.Prepare("INSERT OR IGNORE INTO phones(number, creation_time) values(?,?)")
@@ -59,7 +59,7 @@ func dbInsertPhone(phones chan Phone, sms chan string) {
 			log.Print(phone.number)
 			log.Print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 			//если номер попал в базу - отправляем в канал для послыки смс
-			//sms <- "375296668485"
+			sms <- "375" + phone.number
 		}
 
 	}
@@ -68,7 +68,8 @@ func dbInsertPhone(phones chan Phone, sms chan string) {
 func GetPhonesCount() string {
 	var data string
 	rows := db.sql.QueryRow("SELECT COUNT(*) FROM phones")
-	rows.Scan(&data)
+	err := rows.Scan(&data)
+	checkErr(err)
 	return data
 
 }
@@ -89,7 +90,8 @@ func GetSMS() string {
 func GetTodayPhonesCount() string {
 	var data string
 	rows := db.sql.QueryRow("SELECT COUNT(*) FROM phones WHERE creation_time  >= DATE('now') AND creation_time < DATE('now', '+1 day')")
-	rows.Scan(&data)
+	err := rows.Scan(&data)
+	checkErr(err)
 	return data
 }
 
@@ -106,13 +108,18 @@ func SetBaned(number string) {
 	}
 }
 func GetBaned() []string {
-	baned := []string{}
+	var baned []string
 
 	rows, err := db.sql.Query("select number from phones WHERE baned = 1")
 	if err != nil {
 		panic(err)
 	}
-	defer rows.Close()
+	defer func(rows *sql.Rows) {
+		err := rows.Close()
+		if err != nil {
+
+		}
+	}(rows)
 
 	for rows.Next() {
 		phone := ""
