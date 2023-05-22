@@ -61,6 +61,7 @@ func sendSMSMTS(sms chan string) {
 		sms.StartTime = time.Now().String()
 		sms.CallbackUrl = "https://send-dr-here.com"
 		sms.StartTime = time.Now().Format("2006-01-02 15:04:05")
+		sms.ExtraId = "666"
 		httpposturl := "https://api.communicator.mts.by/686/json2/simple"
 
 		jsonData, _ := json.Marshal(sms)
@@ -81,6 +82,7 @@ func sendSMSMTS(sms chan string) {
 			checkErr(err)
 			if mtsresp.MessageId != "" {
 				log.Print(mtsresp.MessageId)
+				addMessageId(text, mtsresp.MessageId)
 			} else {
 				log.Print("ошибка отправки:")
 				log.Print(string(data))

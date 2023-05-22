@@ -73,7 +73,7 @@ func ScrapPage(pageNumber string) []string {
 		}
 
 	})
-	c.Visit("https://cars.av.by/filter?seller_type[0]=1&place_region[0]=1006&page=" + pageNumber + "&sort=4")
+	c.Visit("https://cars.av.by/filter?seller_type[0]=1&place_region[0]=1006&place_city[0]=6&page=" + pageNumber + "&sort=4")
 	c.Wait()
 	//log.Print(links)
 	return links

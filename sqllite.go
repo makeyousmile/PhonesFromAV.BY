@@ -139,3 +139,9 @@ func Cleardb() {
 	checkErr(err)
 	log.Print(res.RowsAffected())
 }
+
+func addMessageId(number string, message_id string) {
+	res, err := db.sql.Exec("UPDATE phones SET message_id = $1, send_time = $3 WHERE number = $2 ;", message_id, time.Now(), number)
+	checkErr(err)
+	log.Print(res.RowsAffected())
+}
