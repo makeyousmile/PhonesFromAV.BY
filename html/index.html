@@ -6,9 +6,11 @@
     <title>Avtodvor Bot</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="  crossorigin="anonymous"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.sumoselect/3.4.9/jquery.sumoselect.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery.sumoselect/3.4.9/sumoselect.css" rel="stylesheet">
 </head>
 <body>
+
 <section class="section">
     <div class="container has-background-danger">
         <div class="columns">
@@ -17,7 +19,6 @@
                 <h1 class="title">
                     Avtodvor Bot
                 </h1>
-
             </section>
         </div>
         <div class="column">
@@ -30,41 +31,31 @@
         </div>
     </div>
 </section>
-
 <div class="box">
-<nav class="level">
-    <div class="level-item has-text-centered">
+    <div class="columns">
 
-    </div>
-    <div class="level-item has-text-centered">
-        <div>
-            <p class="heading">Собрано номеров</p>
-            <p class="title" id="count"></p>
-        </div>
-    </div>
-    <div class="level-item has-text-centered">
-        <div>
-            <p class="heading">Отпрвлено СМС</p>
-            <p class="title">{{.AllSmsCount}}</p>
-        </div>
-    </div>
-    <div class="level-item has-text-centered">
-        <div>
-            <p class="heading">Собрано номеров сегодня</p>
-            <p class="title" id="counttoday"></p>
-        </div>
-    </div>
-    <div class="level-item has-text-centered">
-        <div>
-            <p class="heading">Отпралено СМС сегодня</p>
-            <p class="title">{{.TodaySMScount}}</p>
-        </div>
-    </div>
-    <div class="level-item has-text-centered">
+        <div class="column has-text-right">
+<!--            <p class="heading>">Выберите облать</p>-->
+            <div class="container">
+                <select multiple="multiple" name="regionselect" id="region" class="has-text-left">
+                    <option class="has-text-left" value="1001">Брестская облать</option>
+                    <option class="has-text-left" value="1002">Витебская область</option>
+                    <option class="has-text-left" value="1003">Гомельская область</option>
+                    <option class="has-text-left" value="1004">Гродненская область</option>
+                    <option class="has-text-left" value="1005">Минская облать</option>
+                    <option class="has-text-left" value="1006">Могилевская облать</option>
+                </select>
+                </div>
+            </div>
+        <div class="column">
+            <select multiple="multiple" name="cityselect" id="city">
 
+            </select>
+        </div>
+        <div class="column"><button class="button is-dark" id="regionButton">Сохранить</button></div>
     </div>
-</nav>
 </div>
+
 <div class="box">
 <div class="columns">
     <div class="column">
@@ -120,7 +111,40 @@
     </div>
 </div>
 
+<div class="box">
+    <nav class="level">
+        <div class="level-item has-text-centered">
 
+        </div>
+        <div class="level-item has-text-centered">
+            <div>
+                <p class="heading">Собрано номеров</p>
+                <p class="title" id="count"></p>
+            </div>
+        </div>
+        <div class="level-item has-text-centered">
+            <div>
+                <p class="heading">Отпрвлено СМС</p>
+                <p class="title">{{.AllSmsCount}}</p>
+            </div>
+        </div>
+        <div class="level-item has-text-centered">
+            <div>
+                <p class="heading">Собрано номеров сегодня</p>
+                <p class="title" id="counttoday"></p>
+            </div>
+        </div>
+        <div class="level-item has-text-centered">
+            <div>
+                <p class="heading">Отпралено СМС сегодня</p>
+                <p class="title">{{.TodaySMScount}}</p>
+            </div>
+        </div>
+        <div class="level-item has-text-centered">
+
+        </div>
+    </nav>
+</div>
 <div class="container">
 
 </div>
@@ -140,6 +164,7 @@
 </body>
 
 <script>
+
     function smssuccess(){
         //alert(10)
         $('#smsButton').addClass("is-success");
@@ -190,6 +215,16 @@
             success : cleardb()
         });
     });
+    $('#regionButton').click(function () {
+        var str =JSON.stringify($('#region').val());
+
+        $.ajax({
+            url: "filter",
+            method: "POST",
+            data : {cfg: str},
+            success: alert(str)
+        });
+    })
 </script>
 <!--скрипты по таймеру-->
 <script>
@@ -217,6 +252,8 @@
         });
     }
     $(document).ready(function() {
+        $('#region').SumoSelect();
+        $('#city').SumoSelect();
         show();
         setInterval ('show()',1000);
     });

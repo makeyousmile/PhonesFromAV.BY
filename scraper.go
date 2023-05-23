@@ -73,7 +73,8 @@ func ScrapPage(pageNumber string) []string {
 		}
 
 	})
-	c.Visit("https://cars.av.by/filter?seller_type[0]=1&place_region[0]=1006&place_city[0]=6&page=" + pageNumber + "&sort=4")
+	url := getFilterForScraper()
+	c.Visit(url + "&page=" + pageNumber + "&sort=4")
 	c.Wait()
 	//log.Print(links)
 	return links
@@ -113,4 +114,14 @@ func getJson(url string, target interface{}) error {
 	defer r.Body.Close()
 
 	return json.NewDecoder(r.Body).Decode(target)
+}
+func getFilterForScraper() string {
+	var link string
+	var regions string
+	for i, region := range cfg.region {
+		regions += "&place_region[" + strconv.Itoa(i) + "]=" + region
+	}
+	link = "https://cars.av.by/filter?seller_type[0]=1" + regions
+
+	return link
 }

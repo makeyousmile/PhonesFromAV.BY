@@ -57,9 +57,9 @@ func dbInsertPhone(phones chan Phone, sms chan string) {
 		checkErr(err)
 		if added == 1 {
 			log.Print(phone.number)
-			log.Print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+			log.Print("номер попал в базу - отправляем в канал для послыки смс")
 			//если номер попал в базу - отправляем в канал для послыки смс
-			sms <- "375" + phone.number
+			//sms <- "375" + phone.number
 		}
 
 	}

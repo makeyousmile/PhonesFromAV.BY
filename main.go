@@ -9,19 +9,32 @@ import (
 	"time"
 )
 
-var db DB
+type Cfg struct {
+	region []string
+	city   []string
+}
+
+var (
+	db  DB
+	cfg Cfg
+)
 
 func init() {
 	db = Newdb()
+	cfg = struct {
+		region []string
+		city   []string
+	}{region: []string{"1001", "1002"}, city: []string{}}
 }
 func main() {
 
 	logToFile()
+	log.Print(getFilterForScraper())
 
-	sms := make(chan string)
-
-	go sendSMSMTS(sms)
-	sms <- "+375293304983"
+	//sms := make(chan string)
+	//
+	//go sendSMSMTS(sms)
+	//sms <- "+375293304983"
 	//go proc()
 	//addMessageId("296668485", "test")
 	go systray.Run(onReady, onExit)
