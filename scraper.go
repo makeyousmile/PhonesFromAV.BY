@@ -73,8 +73,11 @@ func ScrapPage(pageNumber string) []string {
 		}
 
 	})
-	url := getFilterForScraper()
-	c.Visit(url + "&page=" + pageNumber + "&sort=4")
+	url := getFilterForScraper() + "&page=" + pageNumber + "&sort=4"
+	err := c.Visit(url)
+	checkErr(err)
+	log.Print("visit page")
+	log.Print(url)
 	c.Wait()
 	//log.Print(links)
 	return links
@@ -116,12 +119,13 @@ func getJson(url string, target interface{}) error {
 	return json.NewDecoder(r.Body).Decode(target)
 }
 func getFilterForScraper() string {
-	var link string
-	var regions string
-	for i, region := range cfg.region {
-		regions += "&place_region[" + strconv.Itoa(i) + "]=" + region
+	link := "https://cars.av.by/filter?seller_type[0]=1"
+	var regions []string
+	err := json.Unmarshal([]byte(GetParams()), &regions)
+	checkErr(err)
+	for i, region := range regions {
+		link += "&place_region[" + strconv.Itoa(i) + "]=" + region
 	}
-	link = "https://cars.av.by/filter?seller_type[0]=1" + regions
 
 	return link
 }

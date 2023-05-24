@@ -96,7 +96,7 @@ func AjaxFilter(_ http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
 		data := r.FormValue("cfg")
-		log.Print(data)
+		SetParams(data, nil)
 	}
 
 }

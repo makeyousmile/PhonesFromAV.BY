@@ -79,7 +79,7 @@ func SetSMS(sms string) {
 	log.Print(res.RowsAffected())
 }
 func GetSMS() string {
-	var sms = ""
+	var sms string
 
 	res := db.sql.QueryRow("select sms from params")
 	err := res.Scan(&sms)
@@ -144,4 +144,22 @@ func addMessageId(number string, message_id string) {
 	res, err := db.sql.Exec("UPDATE phones SET message_id = $1, send_time = $3 WHERE number = $2 ;", message_id, time.Now(), number)
 	checkErr(err)
 	log.Print(res.RowsAffected())
+}
+func SetParams(region string, city []string) {
+	res, err := db.sql.Exec("UPDATE params SET regions = $1 ;", region)
+	checkErr(err)
+	added, _ := res.RowsAffected()
+	if added != 0 {
+		log.Print("update params")
+		cfg.region = region
+	}
+}
+func GetParams() string {
+	var params string
+
+	res := db.sql.QueryRow("select regions from params")
+	err := res.Scan(&params)
+	checkErr(err)
+
+	return params
 }

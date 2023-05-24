@@ -10,8 +10,10 @@ import (
 )
 
 type Cfg struct {
-	region []string
-	city   []string
+	region  string
+	city    string
+	timeout time.Duration
+	depth   int
 }
 
 var (
@@ -21,10 +23,9 @@ var (
 
 func init() {
 	db = Newdb()
-	cfg = struct {
-		region []string
-		city   []string
-	}{region: []string{"1001", "1002"}, city: []string{}}
+	cfg.region = GetParams()
+	cfg.timeout = time.Minute
+	cfg.depth = 10
 }
 func main() {
 
@@ -35,8 +36,9 @@ func main() {
 	//
 	//go sendSMSMTS(sms)
 	//sms <- "+375293304983"
-	//go proc()
+	go proc()
 	//addMessageId("296668485", "test")
+
 	go systray.Run(onReady, onExit)
 	startHttpServer()
 
@@ -49,10 +51,10 @@ func proc() {
 	go sendSMSMTS(sms)
 
 	//1й запуск - сбор всех номор
-	go getPhone(200, phones)
+	go getPhone(cfg.depth, phones)
 	go dbInsertPhone(phones, sms)
 	for {
-		time.Sleep(time.Minute)
+		time.Sleep(cfg.timeout)
 		log.Print("Get phones fom loop")
 		getPhone(5, phones)
 	}
