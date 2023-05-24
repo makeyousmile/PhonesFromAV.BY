@@ -92,13 +92,19 @@ func AjaxCleardb(_ http.ResponseWriter, r *http.Request) {
 	}
 
 }
-func AjaxFilter(_ http.ResponseWriter, r *http.Request) {
+func AjaxFilterSet(_ http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
 		data := r.FormValue("cfg")
 		SetParams(data, nil)
 	}
 
+}
+func AjaxFilterGet(w http.ResponseWriter, r *http.Request) {
+	filter := GetParams()
+
+	_, err := io.WriteString(w, filter)
+	checkErr(err)
 }
 
 func startHttpServer() {
@@ -108,7 +114,9 @@ func startHttpServer() {
 	http.HandleFunc("/counttoday", AjaxCountToday)
 	http.HandleFunc("/baned", AjaxBaned)
 	http.HandleFunc("/cleardb", AjaxCleardb)
-	http.HandleFunc("/filter", AjaxFilter)
+	http.HandleFunc("/filter", AjaxFilterSet)
+	http.HandleFunc("/getfilter", AjaxFilterGet)
+
 	err := http.ListenAndServe(":80", nil)
 	checkErr(err)
 }

@@ -38,12 +38,12 @@
 <!--            <p class="heading>">Выберите облать</p>-->
             <div class="container">
                 <select multiple="multiple" name="regionselect" id="region" class="has-text-left">
-                    <option class="has-text-left" value="1001">Брестская облать</option>
+                    <option class="has-text-left" value="1001" id="1001">Брестская облать</option>
                     <option class="has-text-left" value="1002">Витебская область</option>
                     <option class="has-text-left" value="1003">Гомельская область</option>
                     <option class="has-text-left" value="1004">Гродненская область</option>
                     <option class="has-text-left" value="1005">Минская облать</option>
-                    <option class="has-text-left" value="1006">Могилевская облать</option>
+                    <option value="1006" class="has-text-left">Могилевская облать</option>
                 </select>
                 </div>
             </div>
@@ -228,6 +228,15 @@
 </script>
 <!--скрипты по таймеру-->
 <script>
+
+    function setRegion(resp) {
+        resp = JSON.parse(resp);
+        resp.forEach(function (curentvalue, index) {
+            $('#region')[0].sumo.selectItem(curentvalue);
+        });
+
+        $('#region')[0].sumo.reload();
+    }
     function show() {
         $.ajax ({
             url: "count",
@@ -250,10 +259,20 @@
                 $("#banedlist").html(html);
             }
         });
+
     }
+
     $(document).ready(function() {
         $('#region').SumoSelect();
         $('#city').SumoSelect();
+
+        $.ajax ({
+            url: "getfilter",
+            cache: false,
+            success: function(resp) {
+                setRegion(resp)
+            }
+        });
         show();
         setInterval ('show()',1000);
     });
