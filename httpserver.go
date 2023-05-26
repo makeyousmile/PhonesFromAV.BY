@@ -92,19 +92,37 @@ func AjaxCleardb(_ http.ResponseWriter, r *http.Request) {
 	}
 
 }
-func AjaxFilterSet(_ http.ResponseWriter, r *http.Request) {
+func AjaxRegionSet(_ http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
-		data := r.FormValue("cfg")
-		SetParams(data, nil)
+		region := r.FormValue("reg")
+		city := r.FormValue("city")
+		log.Print(city)
+		SetRegions(region, city)
 	}
 
 }
-func AjaxFilterGet(w http.ResponseWriter, r *http.Request) {
-	filter := GetParams()
+func AjaxRegionGet(w http.ResponseWriter, r *http.Request) {
+	filter := cfg.region
 
 	_, err := io.WriteString(w, filter)
 	checkErr(err)
+}
+
+func AjaxCitiesGet(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "GET" {
+		cities := GetCities()
+		_, err := io.WriteString(w, cities)
+		checkErr(err)
+	}
+	if r.Method == "POST" {
+		data := r.FormValue("cfg")
+		log.Print(data)
+		fulljson := GetCitiesWithRegion(data)
+		_, err := io.WriteString(w, fulljson)
+		log.Print(fulljson)
+		checkErr(err)
+	}
 }
 
 func startHttpServer() {
@@ -114,8 +132,9 @@ func startHttpServer() {
 	http.HandleFunc("/counttoday", AjaxCountToday)
 	http.HandleFunc("/baned", AjaxBaned)
 	http.HandleFunc("/cleardb", AjaxCleardb)
-	http.HandleFunc("/filter", AjaxFilterSet)
-	http.HandleFunc("/getfilter", AjaxFilterGet)
+	http.HandleFunc("/setregion", AjaxRegionSet)
+	http.HandleFunc("/getregion", AjaxRegionGet)
+	http.HandleFunc("/getcities", AjaxCitiesGet)
 
 	err := http.ListenAndServe(":80", nil)
 	checkErr(err)

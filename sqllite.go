@@ -2,9 +2,11 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
+	"strconv"
 	"time"
 )
 
@@ -16,6 +18,10 @@ type DB struct {
 	sql    *sql.DB
 	stmt   *sql.Stmt
 	buffer []Phone
+}
+type City struct {
+	Id   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 func Newdb() DB {
@@ -145,21 +151,99 @@ func addMessageId(number string, message_id string) {
 	checkErr(err)
 	log.Print(res.RowsAffected())
 }
-func SetParams(region string, city []string) {
-	res, err := db.sql.Exec("UPDATE params SET regions = $1 ;", region)
+func SetRegions(region string, city string) {
+	res, err := db.sql.Exec("UPDATE params SET regions = $1,cities = $2 ;", region, city)
 	checkErr(err)
 	added, _ := res.RowsAffected()
 	if added != 0 {
 		log.Print("update params")
 		cfg.region = region
+		cfg.city = city
 	}
 }
-func GetParams() string {
-	var params string
+func GetRegions() string {
+	var regions string
 
 	res := db.sql.QueryRow("select regions from params")
-	err := res.Scan(&params)
+	err := res.Scan(&regions)
+	checkErr(err)
+	return regions
+}
+
+func GetCities() string {
+	var jsondata string
+	var data []string
+	var cities []City
+
+	res := db.sql.QueryRow("select cities from params")
+	err := res.Scan(&jsondata)
+	checkErr(err)
+	err = json.Unmarshal([]byte(jsondata), &data)
+	for _, id := range data {
+		checkErr(err)
+
+		rows, err := db.sql.Query("select name from city WHERE id = $1", id)
+		if err != nil {
+			panic(err)
+		}
+		defer func(rows *sql.Rows) {
+			err := rows.Close()
+			if err != nil {
+
+			}
+		}(rows)
+
+		for rows.Next() {
+			var city City
+			city.Id, err = strconv.Atoi(id)
+			checkErr(err)
+			err := rows.Scan(&city.Name)
+			if err != nil {
+				checkErr(err)
+				continue
+			}
+
+			cities = append(cities, city)
+		}
+
+	}
+	fulljson, err := json.Marshal(cities)
+	checkErr(err)
+	return string(fulljson)
+}
+func GetCitiesWithRegion(jsondata string) string {
+	var data []string
+	var cities []City
+	err := json.Unmarshal([]byte(jsondata), &data)
+	checkErr(err)
+	for _, region := range data {
+
+		rows, err := db.sql.Query("select id,name from city WHERE region = $1", region)
+		if err != nil {
+			panic(err)
+		}
+		defer func(rows *sql.Rows) {
+			err := rows.Close()
+			if err != nil {
+
+			}
+		}(rows)
+
+		for rows.Next() {
+			var city City
+			err := rows.Scan(&city.Id, &city.Name)
+			if err != nil {
+				checkErr(err)
+				continue
+			}
+			log.Print("city")
+			log.Print(city.Name)
+			cities = append(cities, city)
+		}
+	}
+	fulljson, err := json.Marshal(cities)
 	checkErr(err)
 
-	return params
+	return string(fulljson)
+
 }

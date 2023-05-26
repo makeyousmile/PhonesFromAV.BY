@@ -18,25 +18,25 @@ type Cfg struct {
 
 var (
 	db  DB
-	cfg Cfg
+	cfg = &Cfg{}
 )
 
 func init() {
 	db = Newdb()
-	cfg.region = GetParams()
+	cfg.region = GetRegions()
 	cfg.timeout = time.Minute
 	cfg.depth = 10
 }
 func main() {
 
-	logToFile()
-	log.Print(getFilterForScraper())
+	//logToFile()
+	log.Print(GetCities())
 
 	//sms := make(chan string)
 	//
 	//go sendSMSMTS(sms)
 	//sms <- "+375293304983"
-	go proc()
+	//go proc()
 	//addMessageId("296668485", "test")
 
 	go systray.Run(onReady, onExit)

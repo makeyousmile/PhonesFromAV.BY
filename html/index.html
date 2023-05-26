@@ -48,7 +48,7 @@
                 </div>
             </div>
         <div class="column">
-            <select multiple="multiple" name="cityselect" id="city">
+            <select multiple="multiple" name="cityselect" id="cities">
 
             </select>
         </div>
@@ -164,7 +164,39 @@
 </body>
 
 <script>
+    function getcities(resp) {
 
+        resp = JSON.parse(resp);
+            $.each(resp, function(index, element) {
+                $('#cities')[0].sumo.add(element.id,element.name);
+
+            });
+        alert($('#cities')[0].length);
+       // $('#cities')[0].sumo.reload();
+    }
+    function getcitiesonload(resp) {
+        var str =JSON.stringify($('#region').val());
+        $.ajax({
+            url: "getcities",
+            method: "POST",
+            data : {cfg: str},
+            success: function(json) {
+                getcities(json);
+            }
+        });
+
+        resp = JSON.parse(resp);
+        $.each(resp, function(index, element) {
+            $('#cities')[0].sumo.add(element.id,element.name);
+            $('#cities')[0].sumo.selectItem(index);
+
+
+        });
+        alert($('#cities')[0].length);
+
+
+        $('#cities')[0].sumo.reload();
+    }
     function smssuccess(){
         //alert(10)
         $('#smsButton').addClass("is-success");
@@ -216,13 +248,15 @@
         });
     });
     $('#regionButton').click(function () {
-        var str =JSON.stringify($('#region').val());
+        var regions =JSON.stringify($('#region').val());
+        var cities =JSON.stringify($('#cities').val());
+        alert($('#cities').val());
 
         $.ajax({
-            url: "filter",
+            url: "setregion",
             method: "POST",
-            data : {cfg: str},
-            success: alert(str)
+            data : {reg: regions,city:cities},
+
         });
     })
 </script>
@@ -264,17 +298,40 @@
 
     $(document).ready(function() {
         $('#region').SumoSelect();
-        $('#city').SumoSelect();
+        $('#cities').SumoSelect();
 
         $.ajax ({
-            url: "getfilter",
+            url: "getregion",
             cache: false,
             success: function(resp) {
                 setRegion(resp)
             }
         });
+        $.ajax ({
+            url: "getcities",
+            cache: false,
+            success: function(resp) {
+                getcitiesonload(resp);
+            }
+        });
+
+        $('#region').on('sumo:closed', function(sumo) {
+            var str =JSON.stringify($('#region').val());
+
+            $.ajax({
+                url: "getcities",
+                method: "POST",
+                data : {cfg: str},
+                success: function(resp) {
+                    $('#cities').empty();
+                    getcities(resp);
+
+                }
+            });
+        });
         show();
-        setInterval ('show()',1000);
+        setInterval ('show()',1000)
     });
+
 </script>
 </html>
