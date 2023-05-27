@@ -35,9 +35,8 @@ func main() {
 	//sms := make(chan string)
 	//
 	//go sendSMSMTS(sms)
-	//sms <- "+375293304983"
+	//sms <- "+375296668485"
 	//go proc()
-	//addMessageId("296668485", "test")
 
 	go systray.Run(onReady, onExit)
 	startHttpServer()

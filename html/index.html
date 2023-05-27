@@ -182,17 +182,17 @@
             data : {cfg: str},
             success: function(json) {
                 getcities(json);
+                resp = JSON.parse(resp);
+                $.each(resp, function(index, element) {
+                    $('#cities')[0].sumo.add(element.id,element.name);
+                    $('#cities')[0].sumo.selectItem(index);
+
+
+                });
+
             }
         });
 
-        resp = JSON.parse(resp);
-        $.each(resp, function(index, element) {
-            $('#cities')[0].sumo.add(element.id,element.name);
-            $('#cities')[0].sumo.selectItem(index);
-
-
-        });
-        alert($('#cities')[0].length);
 
 
         $('#cities')[0].sumo.reload();
