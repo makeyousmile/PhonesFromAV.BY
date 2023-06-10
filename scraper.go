@@ -121,11 +121,19 @@ func getJson(url string, target interface{}) error {
 func getFilterForScraper() string {
 	link := "https://cars.av.by/filter?seller_type[0]=1"
 	var regions []string
+	var cities []string
+
 	err := json.Unmarshal([]byte(GetRegions()), &regions)
 	checkErr(err)
+
+	err = json.Unmarshal([]byte(GetCities()), &cities)
+	checkErr(err)
+
 	for i, region := range regions {
 		link += "&place_region[" + strconv.Itoa(i) + "]=" + region
 	}
-
+	for i, city := range cities {
+		link += "&place_city[" + strconv.Itoa(i) + "]=" + city
+	}
 	return link
 }

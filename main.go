@@ -30,13 +30,13 @@ func init() {
 func main() {
 
 	//logToFile()
-	log.Print(GetCities())
+	log.Print(getFilterForScraper())
 
-	//sms := make(chan string)
-	//
-	//go sendSMSMTS(sms)
+	sms := make(chan string)
+
+	go sendSMSMTS(sms)
 	//sms <- "+375296668485"
-	//go proc()
+	go proc()
 
 	go systray.Run(onReady, onExit)
 	startHttpServer()
@@ -50,12 +50,12 @@ func proc() {
 	go sendSMSMTS(sms)
 
 	//1й запуск - сбор всех номор
-	go getPhone(cfg.depth, phones)
+	go getPhone(100, phones)
 	go dbInsertPhone(phones, sms)
 	for {
 		time.Sleep(cfg.timeout)
 		log.Print("Get phones fom loop")
-		getPhone(5, phones)
+		getPhone(cfg.depth, phones)
 	}
 }
 

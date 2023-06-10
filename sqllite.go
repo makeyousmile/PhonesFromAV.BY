@@ -169,8 +169,15 @@ func GetRegions() string {
 	checkErr(err)
 	return regions
 }
-
 func GetCities() string {
+	var cities string
+
+	res := db.sql.QueryRow("select cities from params")
+	err := res.Scan(&cities)
+	checkErr(err)
+	return cities
+}
+func GetCitiesJson() string {
 	var jsondata string
 	var data []string
 	var cities []City

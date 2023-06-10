@@ -111,7 +111,7 @@ func AjaxRegionGet(w http.ResponseWriter, r *http.Request) {
 
 func AjaxCitiesGet(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-		cities := GetCities()
+		cities := GetCitiesJson()
 		_, err := io.WriteString(w, cities)
 		checkErr(err)
 	}

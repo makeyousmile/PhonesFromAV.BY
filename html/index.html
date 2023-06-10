@@ -37,6 +37,7 @@
         <div class="column has-text-right">
 <!--            <p class="heading>">Выберите облать</p>-->
             <div class="container">
+                <label class="label">Выбор области</label>
                 <select multiple="multiple" name="regionselect" id="region" class="has-text-left">
                     <option class="has-text-left" value="1001" id="1001">Брестская облать</option>
                     <option class="has-text-left" value="1002">Витебская область</option>
@@ -48,11 +49,12 @@
                 </div>
             </div>
         <div class="column">
+            <label class="label">Выбор города</label>
             <select multiple="multiple" name="cityselect" id="cities">
 
             </select>
         </div>
-        <div class="column"><button class="button is-dark" id="regionButton">Сохранить</button></div>
+        <div class="column"><button class="button is-dark mt-5" id="regionButton">Сохранить</button></div>
     </div>
 </div>
 
@@ -171,7 +173,6 @@
                 $('#cities')[0].sumo.add(element.id,element.name);
 
             });
-        alert($('#cities')[0].length);
        // $('#cities')[0].sumo.reload();
     }
     function getcitiesonload(resp) {
@@ -324,6 +325,7 @@
                 data : {cfg: str},
                 success: function(resp) {
                     $('#cities').empty();
+                    $('#cities')[0].sumo.reload();
                     getcities(resp);
 
                 }
